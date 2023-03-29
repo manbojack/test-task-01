@@ -10,7 +10,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
   tags                    = {
-    Name = "Public Subnet"
+    Name = "Test Public Subnet"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "private_subnet" {
   cidr_block        = "10.10.20.0/24"
   availability_zone = "ap-south-1b"
   tags              = {
-    Name = "Private Subnet"
+    Name = "Test Private Subnet"
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "Internet_Gateway" {
   ]
   vpc_id = aws_vpc.test_vpc.id
   tags   = {
-    Name = "IG-Public-&-Private-VPC"
+    Name = "Test Internet Gateway"
   }
 }
 
@@ -60,7 +60,7 @@ resource "aws_route_table" "Public-Subnet-RT" {
     gateway_id = aws_internet_gateway.Internet_Gateway.id
   }
   tags = {
-    Name = "Route Table for Internet Gateway"
+    Name = "Test Route Table for Internet Gateway"
   }
 }
 
