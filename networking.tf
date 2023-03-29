@@ -30,3 +30,17 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
+#---------------------------------------------------------------
+# Internet Gateway for the VPC:
+#---------------------------------------------------------------
+resource "aws_internet_gateway" "Internet_Gateway" {
+  depends_on = [
+    aws_vpc.test_vpc,
+    aws_subnet.public_subnet,
+    aws_subnet.private_subnet
+  ]
+  vpc_id = aws_vpc.test_vpc.id
+  tags   = {
+    Name = "IG-Public-&-Private-VPC"
+  }
+}
