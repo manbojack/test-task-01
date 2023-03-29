@@ -63,3 +63,17 @@ resource "aws_route_table" "Public-Subnet-RT" {
     Name = "Route Table for Internet Gateway"
   }
 }
+
+#---------------------------------------------------------------
+# Route Table Association:
+#---------------------------------------------------------------
+resource "aws_route_table_association" "RT-IG-Association" {
+  depends_on = [
+    aws_vpc.test_vpc,
+    aws_subnet.public_subnet,
+    aws_subnet.private_subnet,
+    aws_route_table.Public-Subnet-RT
+  ]
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.Public-Subnet-RT.id
+}
