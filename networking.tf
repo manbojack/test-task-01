@@ -72,24 +72,3 @@ resource "aws_route_table" "private_subnet_route" {
     Name = "Test Route Table for Internet Gateway"
   }
 }
-
-resource "aws_nat_gateway" "nat" {
-  subnet_id = aws_subnet.private_subnet
-
-}
-
-#------------------------------------------------------------------------------
-# Route Table Association for Public:
-#------------------------------------------------------------------------------
-resource "aws_route_table_association" "RT-IG-Association" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.public_subnet_route.id
-}
-
-#------------------------------------------------------------------------------
-# Route Table Association for Private:
-#------------------------------------------------------------------------------
-resource "aws_route_table_association" "RT-IG-Association" {
-  subnet_id      = aws_subnet.private_subnet.id
-  route_table_id = aws_route_table.private_subnet_route.id
-}
