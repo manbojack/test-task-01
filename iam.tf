@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # AWS IAM Policy:
 #------------------------------------------------------------------------------
-resource "aws_iam_policy" "test_s3_am_policy" {
+resource "aws_iam_policy" "test_s3_iam_policy" {
   name        = "test-s3-am-policy"
   description = "test - access to source and destination S3 bucket"
   path        = "/"
@@ -45,7 +45,7 @@ resource "aws_iam_role" "test_s3_aws_iam_role" {
 #------------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "test_s3_policy_attachment" {
   role       = aws_iam_role.test_s3_aws_iam_role.name
-  policy_arn = aws_iam_policy.test_s3_am_policy.arn
+  policy_arn = aws_iam_policy.test_s3_iam_policy.arn
 }
 
 #------------------------------------------------------------------------------
