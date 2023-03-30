@@ -1,79 +1,74 @@
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
+# VPC:
+#------------------------------------------------------------------------------
+resource "aws_vpc" "test_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  tags                 = {
+    Name = "test_vpc"
+  }
+}
+
+#------------------------------------------------------------------------------
 # Public Subnet:
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
 resource "aws_subnet" "public_subnet" {
-  depends_on = [
-    aws_vpc.test_vpc
-  ]
   vpc_id                  = aws_vpc.test_vpc.id
-  cidr_block              = "10.10.10.0/24"
-  availability_zone       = "ap-south-1a"
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "${var.REGION}-a"
   map_public_ip_on_launch = true
   tags                    = {
-    Name = "Public Subnet"
+    Name = "Test Public Subnet"
   }
 }
 
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Private Subnet:
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
 resource "aws_subnet" "private_subnet" {
-  depends_on = [
-    aws_vpc.test_vpc,
-    aws_subnet.public_subnet
-  ]
-  vpc_id            = aws_vpc.test_vpc.id
-  cidr_block        = "10.10.20.0/24"
-  availability_zone = "ap-south-1b"
-  tags              = {
-    Name = "Private Subnet"
+  vpc_id                  = aws_vpc.test_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "${var.REGION}-b"
+  map_public_ip_on_launch = false
+  tags                    = {
+    Name = "Test Private Subnet"
   }
 }
 
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Internet Gateway for the VPC:
-#---------------------------------------------------------------
-resource "aws_internet_gateway" "Internet_Gateway" {
-  depends_on = [
-    aws_vpc.test_vpc,
-    aws_subnet.public_subnet,
-    aws_subnet.private_subnet
-  ]
+#------------------------------------------------------------------------------
+resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.test_vpc.id
   tags   = {
-    Name = "IG-Public-&-Private-VPC"
+    Name = "Test Internet Gateway"
   }
 }
 
-#---------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Route Table for the public subnet:
-#---------------------------------------------------------------
-resource "aws_route_table" "Public-Subnet-RT" {
-  depends_on = [
-    aws_vpc.test_vpc,
-    aws_internet_gateway.Internet_Gateway
-  ]
+#------------------------------------------------------------------------------
+resource "aws_route_table" "public_subnet_route" {
   vpc_id = aws_vpc.test_vpc.id
-  # NAT Rule
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.Internet_Gateway.id
+    gateway_id = aws_internet_gateway.internet_gateway.id
   }
   tags = {
-    Name = "Route Table for Internet Gateway"
+    Name = "Test Route Table for Internet Gateway"
   }
 }
 
-#---------------------------------------------------------------
-# Route Table Association:
-#---------------------------------------------------------------
-resource "aws_route_table_association" "RT-IG-Association" {
-  depends_on = [
-    aws_vpc.test_vpc,
-    aws_subnet.public_subnet,
-    aws_subnet.private_subnet,
-    aws_route_table.Public-Subnet-RT
-  ]
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.Public-Subnet-RT.id
+#------------------------------------------------------------------------------
+# Route Table for the private subnet:
+#------------------------------------------------------------------------------
+resource "aws_route_table" "private_subnet_route" {
+  vpc_id = aws_vpc.test_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.internet_gateway.id
+  }
+  tags = {
+    Name = "Test Route Table for Internet Gateway"
+  }
 }
